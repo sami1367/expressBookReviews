@@ -99,7 +99,7 @@ public_users.post('/review/:isbn', function(req, res) {
   }
 });
 
-regd_users.delete("/auth/review/:isbn", (req, res) => {
+public_users.delete("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
   const username = req.session.username;
 
