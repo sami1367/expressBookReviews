@@ -99,4 +99,32 @@ public_users.post('/review/:isbn', function(req, res) {
   }
 });
 
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const isbn = req.params.isbn;
+  const username = req.session.username;
+
+  // Check if the book exists
+  if (books.hasOwnProperty(isbn)) {
+    const book = books[isbn];
+    const reviews = book.reviews;
+
+    // Filter the reviews based on the session username
+    const filteredReviews = reviews.filter((review) => review.username === username);
+
+    // Delete the matching reviews
+    if (filteredReviews.length > 0) {
+      filteredReviews.forEach((review) => {
+        const index = reviews.indexOf(review);
+        reviews.splice(index, 1);
+      });
+
+      return res.status(200).json({ message: "Review deleted successfully" });
+    } else {
+      return res.status(404).json({ error: "Review not found" });
+    }
+  } else {
+    return res.status(404).json({ error: "Book not found" });
+  }
+});
+
 module.exports.general = public_users;
