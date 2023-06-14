@@ -73,4 +73,30 @@ public_users.get('/review/:isbn', function (req, res) {
   }
 });
 
+public_users.post('/review/:isbn', function(req, res) {
+  const isbn = req.params.isbn;
+  const review = req.query.review;
+  const username = req.user.username; // Assuming the username is stored in the session
+
+  // Find the book in the booksDB
+  const book = booksDB.books[isbn];
+
+  if (!book) {
+    return res.status(404).json({ error: "Book not found" });
+  }
+
+  // Check if the user has already reviewed this book
+  const existingReview = book.reviews.find(r => r.username === username);
+
+  if (existingReview) {
+    // If the user has already reviewed the book, update the existing review
+    existingReview.review = review;
+    res.status(200).json({ message: "Book review modified successfully" });
+  } else {
+    // If the user has not reviewed the book, add a new review
+    book.reviews.push({ username, review });
+    res.status(200).json({ message: "Book review added successfully" });
+  }
+});
+
 module.exports.general = public_users;
